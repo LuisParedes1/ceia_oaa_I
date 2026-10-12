@@ -247,3 +247,5 @@ poetry.lock
 alumnos
 .claude
 .vscode
+# Airflow runtime logs
+clase4/hands_on/container_version/airflow/logs/
