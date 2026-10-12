@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operaciones de Aprendizaje Automático I</title>
+<meta name="description" content="Índice de apuntes, presentaciones y código de Operaciones de Aprendizaje Automático I (CEIA – FIUBA).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --surface-2: #f0eee8;
+    --text: #1d1d1b;
+    --muted: #5f5d57;
+    --border: #e2dfd6;
+    --accent: #0f6e5c;
+    --accent-soft: #e0f0ec;
+    --accent-text: #0b5547;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141513;
+      --surface: #1c1d1b;
+      --surface-2: #252623;
+      --text: #ecebe6;
+      --muted: #a3a19a;
+      --border: #32332f;
+      --accent: #4cc3a6;
+      --accent-soft: #1d3530;
+      --accent-text: #7fdcc4;
+      --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141513;
+    --surface: #1c1d1b;
+    --surface-2: #252623;
+    --text: #ecebe6;
+    --muted: #a3a19a;
+    --border: #32332f;
+    --accent: #4cc3a6;
+    --accent-soft: #1d3530;
+    --accent-text: #7fdcc4;
+    --shadow: none;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  a { color: var(--accent-text); }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+
+  /* Header */
+  .topbar {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--bg); border-bottom: 1px solid var(--border);
+  }
+  .topbar-row { display: flex; align-items: center; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; padding-top: 12px; padding-bottom: 12px; }
+  .brand {
+    font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 15px;
+    color: var(--text); text-decoration: none;
+  }
+  .nav { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+  .nav a { color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500; }
+  .nav a:hover { color: var(--accent-text); }
+  .hero { padding: 48px 0 32px; border-bottom: 1px solid var(--border); }
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 12px;
+  }
+  h1 { font-size: clamp(30px, 5vw, 46px); line-height: 1.1; margin: 0 0 16px; letter-spacing: -.01em; }
+  .lede { max-width: 680px; color: var(--muted); font-size: 18px; margin: 0; }
+  /* Toolbar */
+  .toolbar { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin: 32px 0 16px; }
+  h2 { font-size: 22px; margin: 0; }
+  .search {
+    flex: 1 1 240px; max-width: 340px;
+    padding: 9px 12px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text); font: inherit; font-size: 15px;
+  }
+
+  /* Class cards */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 16px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow);
+  }
+  .card[hidden] { display: none; }
+  .card-head { display: flex; gap: 14px; align-items: flex-start; }
+  .num {
+    flex: none; width: 40px; height: 40px; border-radius: 10px;
+    background: var(--accent-soft); color: var(--accent-text);
+    font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 18px;
+    display: grid; place-items: center;
+  }
+  .card h3 { font-size: 18px; line-height: 1.3; margin: 2px 0 0; }
+  .card h3 a { color: inherit; text-decoration: none; }
+  .card h3 a:hover { text-decoration: underline; text-decoration-color: var(--accent); }
+  .summary { margin: 0; color: var(--muted); font-size: 15px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .tags li {
+    font-size: 12.5px; padding: 3px 8px; border-radius: 999px;
+    background: var(--surface-2); color: var(--muted);
+  }
+  .links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 4px; }
+  .links a {
+    font-size: 13.5px; font-weight: 500; text-decoration: none;
+    padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border); color: var(--text);
+  }
+  .links a:hover { border-color: var(--accent); color: var(--accent-text); }
+  .links a.notes { background: var(--accent-soft); border-color: transparent; color: var(--accent-text); }
+  .empty { color: var(--muted); display: none; padding: 24px 0; }
+
+  /* Info sections */
+  .info { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; margin: 48px 0; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .panel h2 { font-size: 18px; margin-bottom: 12px; }
+  .panel ul { margin: 0; padding-left: 18px; }
+  .panel li { margin-bottom: 6px; }
+  .panel p { margin: 0 0 10px; }
+  .muted { color: var(--muted); font-size: 14.5px; }
+  .biblio li { font-size: 14.5px; }
+  .biblio em { font-style: normal; font-weight: 500; }
+
+  footer { border-top: 1px solid var(--border); padding: 24px 0 40px; color: var(--muted); font-size: 14px; }
+  footer .row { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  .theme-toggle {
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    border-radius: 8px; padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-row">
+    <a class="brand" href="#">OAA I</a>
+    <nav class="nav" aria-label="Enlaces principales">
+      <a href="https://github.com/LuisParedes1/ceia_oaa_I/tree/main">Repositorio de código</a>
+      <a href="https://app.notion.com/p/3c825f24dbe28070b59ae3642703e11f">Apuntes en Notion</a>
+      <a href="https://github.com/dvazquez1981/tg_oaa">Repo del TP</a>
+      <a href="https://campusposgrado.fi.uba.ar/course/view.php?id=245">Campus</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">CEIA · FIUBA</p>
+    <h1>Operaciones de Aprendizaje Automático I</h1>
+    <p class="lede">Apuntes, presentaciones y código de cada clase. La materia trata de cómo llevar modelos de ML a producción de forma escalable y con buenas prácticas, es decir, MLOps.</p>
+  </div>
+</section>
+
+<main class="wrap">
+  <div class="toolbar">
+    <h2 id="clases">Clases</h2>
+    <input class="search" id="search" type="search" placeholder="Buscar tema (ej. Docker, MLflow, A/B)…" aria-label="Buscar por tema">
+  </div>
+  <div class="grid" id="grid"></div>
+  <p class="empty" id="empty">No hay clases que coincidan con la búsqueda.</p>
+
+  <section class="info">
+    <div class="panel" id="evaluacion">
+      <h2>Evaluación</h2>
+      <p>Un trabajo práctico final grupal (máximo 6 personas) que se entrega en dos partes: la primera en la clase 5 y la final 7 días después de la última clase.</p>
+      <ul>
+        <li><strong>Nivel local (6–8):</strong> implementar en local el ciclo de desarrollo del modelo hasta generar el artefacto entrenado, usando un orquestador.</li>
+        <li><strong>Nivel en contenedores (8–10):</strong> desplegar el modelo con Airflow, MLflow, PostgreSQL, MinIO y FastAPI sobre Docker.</li>
+      </ul>
+      <p class="muted" style="margin-top:10px">Base: <a href="https://github.com/facundolucianna/amq2-service-ml">amq2-service-ml</a> · <a href="https://github.com/facundolucianna/amq2-service-ml/tree/example_implementation">ejemplo de implementación</a> · <a href="https://app.notion.com/p/3c825f24dbe2800a8236f7a910bcd6ce">apunte</a></p>
+    </div>
+
+    <div class="panel">
+      <h2>Requerimientos</h2>
+      <ul>
+        <li><strong>Lenguaje:</strong> Python ≥ 3.10 (uv, Poetry, pip o Conda)</li>
+        <li><strong>Librerías:</strong> MLflow, librerías de datos y ML, Jupyter</li>
+        <li><strong>Herramientas:</strong> GitHub, Docker, Apache Airflow</li>
+        <li><strong>IDE:</strong> VS Code o PyCharm Community</li>
+      </ul>
+      <p class="muted" style="margin-top:10px">8 clases teórico-prácticas, con hands-on en la mayoría.</p>
+    </div>
+
+    <div class="panel biblio">
+      <h2>Bibliografía</h2>
+      <ul>
+        <li><em>Designing Machine Learning Systems</em>, Chip Huyen</li>
+        <li><em>Machine Learning Engineering with Python</em>, Andrew P. McMahon</li>
+        <li><em>Engineering MLOps</em>, Emmanuel Raj</li>
+        <li><em>Introducing MLOps</em>, Treveil et al.</li>
+        <li><em>Practical MLOps</em>, Noah Gift y Alfredo Deza</li>
+        <li><em>Machine Learning Engineering</em>, Andriy Burkov</li>
+        <li><em>Machine Learning Engineering in Action</em>, Ben Wilson</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>Material bajo licencia <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">CC BY-NC-SA 4.0</a>.</span>
+    <button class="theme-toggle" id="theme" type="button">Cambiar tema</button>
+  </div>
+</footer>
+
+<script>
+  const REPO = "https://github.com/LuisParedes1/ceia_oaa_I";
+  const tree = (p) => `${REPO}/tree/main/${p}`;
+  const blob = (p) => `${REPO}/blob/main/${p}`;
+  const notion = (id) => `https://app.notion.com/p/${id}`;
+
+  // Una entrada por clase. Para agregar material, sumá un link a `links`.
+  const CLASES = [
+    {
+      n: 1, title: "MLOps", notion: "dd125f24dbe2829d8af181d15c0e4bec",
+      summary: "Ciclo de vida de un proyecto de ML, qué es MLOps y sus niveles, entorno productivo y buenas prácticas de programación.",
+      tags: ["Ciclo de vida", "Roles", "Pipelines", "Niveles de MLOps", "Desarrollo vs. producción", "Buenas prácticas"],
+      links: [
+        ["Slides", "clase1/teoria/clase1.pdf"],
+        ["Hands-on", tree("clase1/hands-on")],
+        ["Notebook", blob("clase1/MLOPS1_buenas_practicas.ipynb")],
+      ],
+    },
+    {
+      n: 2, title: "Desarrollo de modelos", notion: "93025f24dbe2826a9ba4814c708a0282",
+      summary: "Cómo elegir un modelo, las 4 fases del desarrollo, depuración, entrenamiento distribuido, métodos de evaluación, contenedores y Docker.",
+      tags: ["Selección de modelos", "4 fases", "Depuración", "Entrenamiento distribuido", "Calibración", "Docker", "Docker Compose"],
+      links: [
+        ["Slides", "clase2/teoria/clase2.pdf"],
+        ["Hands-on", tree("clase2/hands-on")],
+      ],
+    },
+    {
+      n: 3, title: "Infraestructura", notion: "97525f24dbe2821ca72501e1b01d2ed7",
+      summary: "Capas de infraestructura: almacenamiento, cómputo y plataforma de ML. Formatos de datos, ETL/ELT y MLflow.",
+      tags: ["Formatos de datos", "Parquet vs. CSV", "ETL / ELT", "Escalamiento", "Registro de modelos", "MLflow"],
+      links: [
+        ["Slides", "clase3/teoria/clase3.pdf"],
+        ["Hands-on", tree("clase3/hands-on")],
+        ["Notebook", tree("clase3/jupyter_notebook")],
+      ],
+    },
+    {
+      n: 4, title: "Administración de recursos", notion: "44c25f24dbe282b0bd7b81dec1cc0ce7",
+      summary: "Orquestadores y sincronizadores, DAGs, herramientas de gestión de flujos de trabajo y Apache Airflow.",
+      tags: ["Orquestadores", "Sincronizadores", "DAG", "Prefect", "Argo", "Kubeflow", "Metaflow", "Airflow"],
+      links: [
+        ["Slides", "clase4/teoria/clase4.pdf"],
+        ["Hands-on", tree("clase4/hands_on")],
+      ],
+    },
+    {
+      n: 5, title: "Desplegado de modelos: predicción en lotes", notion: "05125f24dbe283bab509014578d87fe6",
+      summary: "Patrones y estrategias de despliegue, cómo servir modelos, propiedades del entorno de ejecución y predicción en lotes con Metaflow y Redis.",
+      tags: ["Patrones de despliegue", "A/B testing", "Canary", "Bandidos", "Batch", "Redis", "Metaflow"],
+      links: [
+        ["Slides", "clase5/teoria/clase5.pdf"],
+        ["Hands-on", tree("clase5/hands_on")],
+      ],
+    },
+    {
+      n: 6, title: "Desplegado de modelos: on-line", notion: "d6825f24dbe2832a9410816b48083968",
+      summary: "Despliegue en VMs, contenedores y serverless. APIs, microservicios, REST e implementación de REST APIs en Python con FastAPI.",
+      tags: ["Serverless", "Microservicios", "REST API", "HTTP", "OpenAPI", "FastAPI"],
+      links: [
+        ["Slides", "clase6/teoria/clase6.pdf"],
+        ["Hands-on", tree("clase6/hands-on")],
+      ],
+    },
+    {
+      n: 7, title: "Estrategias de implementación", notion: "a0525f24dbe283449d818188db4f484d",
+      summary: "Modelos en el mundo real: errores, cambios y naturaleza humana. Casos de estudio en AWS y Azure.",
+      tags: ["Errores", "Cambios", "Experiencia de usuario", "Forecasting", "AWS", "Azure", "Spark"],
+      links: [
+        ["Slides", "clase7/teoria/clase7.pdf"],
+        ["README", tree("clase7")],
+      ],
+    },
+    {
+      n: 8, title: "Consultas del TP", notion: "3f725f24dbe28093b724e66bff62cac3",
+      summary: "Clase de consultas sobre el trabajo práctico final.",
+      tags: ["Trabajo práctico"],
+      links: [
+        ["Evaluación", "#evaluacion"],
+        ["Repo del TP", "https://github.com/dvazquez1981/tg_oaa"],
+      ],
+    },
+  ];
+
+  const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const norm = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
+  const grid = document.getElementById("grid");
+  grid.innerHTML = CLASES.map((c) => `
+    <article class="card" data-search="${esc(norm([c.n, c.title, c.summary, ...c.tags].join(" ")))}">
+      <div class="card-head">
+        <span class="num" aria-hidden="true">${c.n}</span>
+        <h3><a href="${notion(c.notion)}">Clase ${c.n} · ${esc(c.title)}</a></h3>
+      </div>
+      <p class="summary">${esc(c.summary)}</p>
+      <ul class="tags">${c.tags.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
+      <div class="links">
+        <a class="notes" href="${notion(c.notion)}">Apuntes</a>
+        ${c.links.map(([label, href]) => `<a href="${href}">${esc(label)}</a>`).join("")}
+      </div>
+    </article>`).join("");
+
+  const cards = [...grid.children];
+  const empty = document.getElementById("empty");
+  document.getElementById("search").addEventListener("input", (e) => {
+    const q = norm(e.target.value.trim());
+    let shown = 0;
+    for (const card of cards) {
+      const match = !q || card.dataset.search.includes(q);
+      card.hidden = !match;
+      shown += match;
+    }
+    empty.style.display = shown ? "none" : "block";
+  });
+
+  const root = document.documentElement;
+  try { const t = localStorage.getItem("theme"); if (t) root.dataset.theme = t; } catch (_) {}
+  document.getElementById("theme").addEventListener("click", () => {
+    const dark = root.dataset.theme
+      ? root.dataset.theme === "dark"
+      : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("theme", root.dataset.theme); } catch (_) {}
+  });
+</script>
+</body>
+</html>
